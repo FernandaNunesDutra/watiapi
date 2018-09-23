@@ -5,6 +5,7 @@
  */
 package api.service;
 
+import api.dao.UserDAO;
 import api.model.User;
 import api.response.UserResponse;
 import com.google.gson.Gson;
@@ -50,24 +51,36 @@ public class UserFacadeREST extends AbstractFacade<User> {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response login(String login) {
       
+        UserDAO userDao = new UserDAO(em);
+        
         try{
             
             JsonParser parser = new JsonParser();
             JsonObject o = parser.parse(login).getAsJsonObject();
             String password = o.get("password").getAsString();
-            Query query = em.createQuery("Select u FROM User u WHERE u.email = :email and u.password = :password", User.class); 
+            
+            /*Query query = em.createQuery("Select u FROM User u WHERE u.email = :email and u.password = :password", User.class); 
             query.setParameter("email", o.get("email").getAsString());
             query.setParameter("password", password.getBytes());
-            User user = (User) query.getSingleResult();
+            User user = (User) query.getSingleResult();*/
+            User user = userDao.login(o.get("email").getAsString(), password);
 
-            Gson gson = new Gson();
-            UserResponse response = new UserResponse(user.getId(), user.getEmail(), user.getName());
-            String json = gson.toJson(response);
-
-            return Response.ok(json, MediaType.APPLICATION_JSON).build();   
+            if(user != null){
+            
+                UserResponse response = new UserResponse(user.getId(), user.getEmail(), user.getName());
+                Gson gson = new Gson();
+                String json = gson.toJson(response);
+                
+                return Response.ok(json, MediaType.APPLICATION_JSON).build();   
+            
+            }else{
+                return Response.status(Response.Status.UNAUTHORIZED).entity("Usuário inválido.").build();  
+            }
+            
+            
 
         }catch(Exception e){
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Usuário inválido.").build();  
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro no servidor.").build();  
         }
         
     }
