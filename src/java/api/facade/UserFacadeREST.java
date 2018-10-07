@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package api.service;
+package api.facade;
 
 import api.dao.UserDAO;
 import api.model.User;
 import api.response.UserResponse;
+import api.service.Authentication;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

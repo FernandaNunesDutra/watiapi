@@ -29,7 +29,8 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(api.service.UserFacadeREST.class);
+        resources.add(api.facade.ChallengeFacadeREST.class);
+        resources.add(api.facade.UserFacadeREST.class);
     }
     
 }
