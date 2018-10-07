@@ -12,8 +12,6 @@ import api.service.Authentication;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.util.Base64;
-import java.util.Date;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,7 +20,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import sun.text.normalizer.ICUBinary;
 
 /**
  *
@@ -55,8 +52,10 @@ public class UserFacadeREST extends AbstractFacade<User> {
 
             if(user != null){
            
-                String token = Authentication.generateToken(user.getEmail(), user.getPassword(), user.getName(), user.getId());
+                String token = Authentication.generateToken(user.getEmail(), user.getId());
                 UserResponse response = new UserResponse(user.getId(), user.getEmail(), user.getName(), token);
+                userDao.updateToken(token, user.getId());
+                
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
                 

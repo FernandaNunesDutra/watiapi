@@ -5,6 +5,7 @@
  */
 package api.model;
 
+import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -39,16 +40,21 @@ public class Challenge implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @SerializedName("id")
     private Integer id;
     @Size(max = 255)
     @Column(name = "description")
+    @SerializedName("description")
     private String description;
     @Size(max = 255)
     @Column(name = "title")
+    @SerializedName("title")
     private String title;
     @Column(name = "type")
+    @SerializedName("type")
     private Integer type;
     @Column(name = "value")
+    @SerializedName("value")
     private Integer value;
 
     public Challenge() {
@@ -97,30 +103,4 @@ public class Challenge implements Serializable {
     public void setValue(Integer value) {
         this.value = value;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Challenge)) {
-            return false;
-        }
-        Challenge other = (Challenge) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "api.model.Challenge[ id=" + id + " ]";
-    }
-    
 }

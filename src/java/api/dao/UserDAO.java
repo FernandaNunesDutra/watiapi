@@ -7,9 +7,7 @@ package api.dao;
 
 import api.model.User;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import static sun.security.krb5.Confounder.bytes;
 
 /**
  *
@@ -17,7 +15,6 @@ import static sun.security.krb5.Confounder.bytes;
  */
 public class UserDAO {
     
-    //@PersistenceContext(unitName = "watiapiPU")
     private EntityManager em;
     
     public UserDAO(EntityManager em){
@@ -40,5 +37,70 @@ public class UserDAO {
         
         return user;
     }
+    
+     public void updateToken(String token, long id){
+         
+         try{
+             
+            Query query = em.createQuery("UPDATE User u SET u.token = :token WHERE u.id = :id", User.class); 
+            query.setParameter("token", token);
+            query.setParameter("id", id);
+            query.executeUpdate();
+        
+        }catch(Exception e){
+            System.out.print("Erro ao deslogar usuário.");
+        }
+    } 
+    
+    public boolean validate(String token){
+        
+        User user = findByToken(token);
+                
+        try{
+            
+            if(user !=  null) 
+                return true;
+        
+        }catch(Exception e){
+            System.out.print("Erro ao validar usuário pelo token.");
+        }
+        
+        return false;
+    }
+    
+    public boolean logout(String token){
+         
+         try{
+             
+            Query query = em.createNativeQuery("UPDATE tb_user SET token = NULL WHERE token = :token", User.class); 
+            query.setParameter("token", token); 
+            query.executeUpdate();
+            
+            return true;
+        
+        }catch(Exception e){
+            System.out.print("Erro ao deslogar usuário.");
+        }
+         
+         return false;    
+    }   
+    
+    private User findByToken(String token){
+        
+        User user = null;
+        
+        Query query = em.createQuery("Select u FROM User u WHERE u.token = :token", User.class); 
+        query.setParameter("token", token); 
+        
+        try{
+            user = (User) query.getSingleResult();
+        }catch(Exception e){
+            System.out.print("Erro ao buscar usuário pelo token no banco.");
+        }
+        
+        return user;
+  
+    }
+    
     
 }
