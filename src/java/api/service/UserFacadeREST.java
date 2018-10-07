@@ -11,25 +11,24 @@ import api.response.UserResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.util.List;
+import java.util.Base64;
+import java.util.Date;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import sun.text.normalizer.ICUBinary;
 
 /**
  *
  * @author fernanda
  */
 @Stateless
-@Path("api.user")
+@Path("user")
 public class UserFacadeREST extends AbstractFacade<User> {
 
     @PersistenceContext(unitName = "watiapiPU")
@@ -37,13 +36,6 @@ public class UserFacadeREST extends AbstractFacade<User> {
 
     public UserFacadeREST() {
         super(User.class);
-    }
-
-    @GET
-    @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<User> findAll() {
-        return super.findAll();
     }
 
     @POST
@@ -58,16 +50,12 @@ public class UserFacadeREST extends AbstractFacade<User> {
             JsonParser parser = new JsonParser();
             JsonObject o = parser.parse(login).getAsJsonObject();
             String password = o.get("password").getAsString();
-            
-            /*Query query = em.createQuery("Select u FROM User u WHERE u.email = :email and u.password = :password", User.class); 
-            query.setParameter("email", o.get("email").getAsString());
-            query.setParameter("password", password.getBytes());
-            User user = (User) query.getSingleResult();*/
             User user = userDao.login(o.get("email").getAsString(), password);
 
             if(user != null){
             
-                UserResponse response = new UserResponse(user.getId(), user.getEmail(), user.getName());
+                String token = Authentication.generateToken(user.getEmail(), user.getId());
+                UserResponse response = new UserResponse(user.getId(), user.getEmail(), user.getName(), token);
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
                 
@@ -75,14 +63,11 @@ public class UserFacadeREST extends AbstractFacade<User> {
             
             }else{
                 return Response.status(Response.Status.UNAUTHORIZED).entity("Usuário inválido.").build();  
-            }
-            
-            
+            }            
 
         }catch(Exception e){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro no servidor.").build();  
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();  
         }
-        
     }
     
     @Override
