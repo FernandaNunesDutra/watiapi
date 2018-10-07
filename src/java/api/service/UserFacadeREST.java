@@ -53,8 +53,8 @@ public class UserFacadeREST extends AbstractFacade<User> {
             User user = userDao.login(o.get("email").getAsString(), password);
 
             if(user != null){
-            
-                String token = Authentication.generateToken(user.getEmail(), user.getId());
+           
+                String token = Authentication.generateToken(user.getEmail(), user.getPassword(), user.getName(), user.getId());
                 UserResponse response = new UserResponse(user.getId(), user.getEmail(), user.getName(), token);
                 Gson gson = new Gson();
                 String json = gson.toJson(response);

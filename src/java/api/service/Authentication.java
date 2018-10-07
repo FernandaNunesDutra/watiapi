@@ -13,11 +13,11 @@ import java.util.Base64;
  */
 public class Authentication {
     
-    public static String key = ")`pS_gKY]?`~&>b=`'Za~%UGx3[*ND}/(.'8]PvmN!(S/K]*Q\\JW*M\":)U>L";
+    public static String key = ")`pS_gKY]?`~&>b=`'Za~%UGx3[*ND}/(.'8]PvmN!";
     
-    public static String generateToken(String email, long id) {
+    public static String generateToken(String email, byte[] senha, String nome, long id) {
         
-        String keySource = email + id + key;
+        String keySource = email + nome + senha + id + key;
         byte[] tokenByte = Base64.getEncoder().encode(keySource.getBytes());
         String token = new String(tokenByte);
         
