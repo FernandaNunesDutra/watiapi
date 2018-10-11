@@ -5,7 +5,6 @@
  */
 package api.response;
 
-import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 /**
