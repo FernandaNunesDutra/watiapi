@@ -70,6 +70,39 @@ public class UserFacadeREST extends AbstractFacade<User> {
         }
     }
     
+    @POST
+    @Path("logout")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response logout(String logout) {
+      
+        UserDAO userDao = new UserDAO(em);
+        
+        try{
+            
+            
+            JsonParser parser = new JsonParser();
+            JsonObject o = parser.parse(logout).getAsJsonObject();
+            String token = o.get("token").getAsString();
+            boolean validate = userDao.validate(token);
+
+            if(validate){
+                
+                userDao.logout(token);
+                
+                Gson gson = new Gson();
+                String json = gson.toJson("Sucesso");
+                
+                return Response.ok(json, MediaType.APPLICATION_JSON).build();   
+            
+            }else{
+                return Response.status(Response.Status.FORBIDDEN).entity("Ação não permitida para esse usuário.").build();  
+            }                  
+
+        }catch(Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();  
+        }
+    }
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;
