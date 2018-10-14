@@ -11,6 +11,7 @@ import api.model.Challenge;
 import api.response.ChallengesResponse;
 import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -50,10 +51,8 @@ public class ChallengeFacadeREST extends AbstractFacade<Challenge> {
             boolean validate = userDao.validate(token);
 
             if(validate){
-           
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                java.util.Date dateCreation = dateFormat.parse(date);
 
+                Date dateCreation = new SimpleDateFormat("yyyyMMdd").parse(date);
                 ChallengesResponse response = new ChallengesResponse(challengeDao.getByDate(dateCreation));
                 Gson gson = new Gson();
                 String json = gson.toJson(response);

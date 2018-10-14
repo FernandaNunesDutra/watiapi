@@ -7,6 +7,7 @@ package api.model;
 
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,7 +56,7 @@ public class Challenge implements Serializable {
     private Integer value;
     @Column(name = "date_creation")
     @SerializedName("date_creation")
-    private Integer dateCreation;
+    private Date dateCreation;
 
     public Challenge() {
     }
@@ -104,11 +105,11 @@ public class Challenge implements Serializable {
         this.value = value;
     }
 
-    public Integer getDateCreation() {
+    public Date getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(Integer dateCreation) {
+    public void setDateCreation(Date dateCreation) {
         this.dateCreation = dateCreation;
     }
     

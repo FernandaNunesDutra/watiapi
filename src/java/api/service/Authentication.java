@@ -5,24 +5,27 @@
  */
 package api.service;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Random;
 
 /**
  *
  * @author fernanda
  */
 public class Authentication {
-    
-    public static String key = ")`pS%UGx3[*ND}(.'8]mN!";
-    
-    public static String generateToken(String email, long id) {
         
-        String keySource = email + new Date() + id + key;
+    public static String generateToken(String email, long id) {
+        SecureRandom random = new SecureRandom();
+        String randomString = new BigInteger(130, random).toString(32);
+        String keySource = randomString + new Date() + id + email;
         byte[] tokenByte = Base64.getEncoder().encode(keySource.getBytes());
         String token = new String(tokenByte);
         
         return token;
    
     }  
+
 }
