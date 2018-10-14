@@ -87,10 +87,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
                 
                 userDao.logout(token);
                 
-                Gson gson = new Gson();
-                String json = gson.toJson("Sucesso");
-                
-                return Response.ok(json, MediaType.APPLICATION_JSON).build();   
+                return Response.ok().build();   
             
             }else{
                 return Response.status(Response.Status.FORBIDDEN).entity("Ação não permitida para esse usuário.").build();  

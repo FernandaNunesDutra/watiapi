@@ -20,8 +20,7 @@ public class UserResponse {
     @SerializedName("name")
     private String name; 
     @SerializedName("token")
-    private String token; 
-    
+    private String token;   
 
     public UserResponse(long id, String email, String name, String token) {
         this.id = id;
@@ -29,6 +28,5 @@ public class UserResponse {
         this.name = name;
         this.token = token;
     }
-    
-    
+   
 }

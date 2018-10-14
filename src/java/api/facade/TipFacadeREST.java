@@ -5,10 +5,10 @@
  */
 package api.facade;
 
-import api.dao.ChallengeDAO;
+import api.dao.TipDao;
 import api.dao.UserDAO;
-import api.model.Challenge;
-import api.response.ChallengesResponse;
+import api.model.Tip;
+import api.response.TipsResponse;
 import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,22 +27,22 @@ import javax.ws.rs.core.Response;
  * @author fernanda
  */
 @Stateless
-@Path("challenge")
-public class ChallengeFacadeREST extends AbstractFacade<Challenge> {
+@Path("tip")
+public class TipFacadeREST extends AbstractFacade<Tip> {
 
     @PersistenceContext(unitName = "watiapiPU")
     private EntityManager em;
 
-    public ChallengeFacadeREST() {
-        super(Challenge.class);
+    public TipFacadeREST() {
+        super(Tip.class);
     }
-
+    
     @GET
     @Path("all")
     public Response all(@HeaderParam("token") String token, @QueryParam("date") String date) {
       
         UserDAO userDao = new UserDAO(em);
-        ChallengeDAO challengeDao = new ChallengeDAO(em);
+        TipDao tipDao = new TipDao(em);
         
         try{
 
@@ -51,7 +51,7 @@ public class ChallengeFacadeREST extends AbstractFacade<Challenge> {
             if(validate){
 
                 Date dateCreation = new SimpleDateFormat("yyyyMMdd").parse(date);
-                ChallengesResponse response = new ChallengesResponse(challengeDao.getByDate(dateCreation));
+                TipsResponse response = new TipsResponse(tipDao.getByDate(dateCreation));
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
                 
@@ -65,7 +65,7 @@ public class ChallengeFacadeREST extends AbstractFacade<Challenge> {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();  
         }
     }
-
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;

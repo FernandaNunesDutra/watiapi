@@ -25,22 +25,6 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "tb_user")
-/*@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
-    , @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id")
-    , @NamedQuery(name = "User.findByAuthorizeData", query = "SELECT u FROM User u WHERE u.authorizeData = :authorizeData")
-    , @NamedQuery(name = "User.findByBirth", query = "SELECT u FROM User u WHERE u.birth = :birth")
-    , @NamedQuery(name = "User.findByDtCadastro", query = "SELECT u FROM User u WHERE u.dtCadastro = :dtCadastro")
-    , @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
-    , @NamedQuery(name = "User.findByExperimentalGroups", query = "SELECT u FROM User u WHERE u.experimentalGroups = :experimentalGroups")
-    , @NamedQuery(name = "User.findByGender", query = "SELECT u FROM User u WHERE u.gender = :gender")
-    , @NamedQuery(name = "User.findByName", query = "SELECT u FROM User u WHERE u.name = :name")
-    , @NamedQuery(name = "User.findByPesquisaEnviada", query = "SELECT u FROM User u WHERE u.pesquisaEnviada = :pesquisaEnviada")
-    , @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone")
-    , @NamedQuery(name = "User.findByPreferedLanguage", query = "SELECT u FROM User u WHERE u.preferedLanguage = :preferedLanguage")
-    , @NamedQuery(name = "User.findByReceiveEmails", query = "SELECT u FROM User u WHERE u.receiveEmails = :receiveEmails")
-    , @NamedQuery(name = "User.findByRecoverCode", query = "SELECT u FROM User u WHERE u.recoverCode = :recoverCode")})*/
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,7 +41,6 @@ public class User implements Serializable {
     @Column(name = "dt_cadastro")
     @Temporal(TemporalType.DATE)
     private Date dtCadastro;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="E-mail inválido")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 50)
     @Column(name = "email")
     private String email;
@@ -73,7 +56,6 @@ public class User implements Serializable {
     private byte[] password;
     @Column(name = "pesquisa_enviada")
     private Boolean pesquisaEnviada;
-    // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Formato de telefone/fax inválido, deve ser xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Size(max = 255)
     @Column(name = "phone")
     private String phone;

@@ -9,7 +9,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Random;
 
 /**
  *
@@ -25,7 +24,6 @@ public class Authentication {
         String token = new String(tokenByte);
         
         return token;
-   
     }  
 
 }
