@@ -16,6 +16,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -70,19 +72,15 @@ public class UserFacadeREST extends AbstractFacade<User> {
         }
     }
     
-    @POST
+    @GET
     @Path("logout")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response logout(String logout) {
+    public Response logout(@HeaderParam("token") String token) {
       
         UserDAO userDao = new UserDAO(em);
         
         try{
             
-            
-            JsonParser parser = new JsonParser();
-            JsonObject o = parser.parse(logout).getAsJsonObject();
-            String token = o.get("token").getAsString();
             boolean validate = userDao.validate(token);
 
             if(validate){

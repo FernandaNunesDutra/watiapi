@@ -72,7 +72,7 @@ public class UserDAO {
          
          try{
              
-            Query query = em.createNativeQuery("UPDATE tb_user SET token = NULL WHERE token = :token", User.class); 
+            Query query = em.createQuery("UPDATE User u SET u.token = NULL WHERE u.token = :token", User.class); 
             query.setParameter("token", token); 
             query.executeUpdate();
             

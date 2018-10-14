@@ -13,11 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -25,14 +22,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "tb_challenge")
-@XmlRootElement
+/*@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Challenge.findAll", query = "SELECT c FROM Challenge c")
     , @NamedQuery(name = "Challenge.findById", query = "SELECT c FROM Challenge c WHERE c.id = :id")
     , @NamedQuery(name = "Challenge.findByDescription", query = "SELECT c FROM Challenge c WHERE c.description = :description")
     , @NamedQuery(name = "Challenge.findByTitle", query = "SELECT c FROM Challenge c WHERE c.title = :title")
     , @NamedQuery(name = "Challenge.findByType", query = "SELECT c FROM Challenge c WHERE c.type = :type")
-    , @NamedQuery(name = "Challenge.findByValue", query = "SELECT c FROM Challenge c WHERE c.value = :value")})
+    , @NamedQuery(name = "Challenge.findByValue", query = "SELECT c FROM Challenge c WHERE c.value = :value")})*/
 public class Challenge implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,6 +53,9 @@ public class Challenge implements Serializable {
     @Column(name = "value")
     @SerializedName("value")
     private Integer value;
+    @Column(name = "date_creation")
+    @SerializedName("date_creation")
+    private Integer dateCreation;
 
     public Challenge() {
     }
@@ -103,4 +103,14 @@ public class Challenge implements Serializable {
     public void setValue(Integer value) {
         this.value = value;
     }
+
+    public Integer getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(Integer dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+    
+    
 }

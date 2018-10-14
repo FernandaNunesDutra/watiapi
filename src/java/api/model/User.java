@@ -14,13 +14,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -28,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "tb_user")
-@XmlRootElement
+/*@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
     , @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id")
@@ -43,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone")
     , @NamedQuery(name = "User.findByPreferedLanguage", query = "SELECT u FROM User u WHERE u.preferedLanguage = :preferedLanguage")
     , @NamedQuery(name = "User.findByReceiveEmails", query = "SELECT u FROM User u WHERE u.receiveEmails = :receiveEmails")
-    , @NamedQuery(name = "User.findByRecoverCode", query = "SELECT u FROM User u WHERE u.recoverCode = :recoverCode")})
+    , @NamedQuery(name = "User.findByRecoverCode", query = "SELECT u FROM User u WHERE u.recoverCode = :recoverCode")})*/
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
