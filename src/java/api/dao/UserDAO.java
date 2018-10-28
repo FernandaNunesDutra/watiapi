@@ -85,7 +85,7 @@ public class UserDAO {
          return false;    
     }   
     
-    private User findByToken(String token){
+    public User findByToken(String token){
         
         User user = null;
         

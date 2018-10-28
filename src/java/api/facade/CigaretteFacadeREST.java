@@ -9,8 +9,7 @@ import api.dao.CigaretteDAO;
 import api.dao.UserDAO;
 import api.model.Cigarette;
 import api.model.User;
-import api.response.UserResponse;
-import api.service.Authentication;
+import api.response.TotalCigaretteResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -43,11 +42,11 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
     }
 
     @POST
-    //@Path("cigarette")
+    @Path("today")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response today(@HeaderParam("token") String token, String cigarette) {
+    public Response postToday(@HeaderParam("token") String token, String cigarette) {
       
-         UserDAO userDao = new UserDAO(em);
+        UserDAO userDao = new UserDAO(em);
         
         try{
             
@@ -58,12 +57,16 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
                 
                 JsonObject o = parser.parse(cigarette).getAsJsonObject();
-                int numCigarette = o.get("num_cigarette").getAsInt();
+                
                 Long packCigarettesPrice =  o.get("pack_cigarettes_price").getAsLong();
                 Date date = formatter.parse(o.get("date_creation").getAsString());
+                int numCigarette = o.get("num_cigarette").getAsInt();
+                Long economized =  o.get("economized").getAsLong();
+                Long spent =  o.get("spent").getAsLong();
+                
                 
                 CigaretteDAO cigaretteDao = new CigaretteDAO(em);
-                cigaretteDao.insert(new Cigarette(packCigarettesPrice, numCigarette, date));
+                cigaretteDao.insert(new Cigarette(packCigarettesPrice,economized, spent, numCigarette, date));
                 
                 Gson gson = new Gson();
                 String json = gson.toJson(cigaretteDao.getToday());
@@ -79,14 +82,49 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
     }
     
     @GET
-    //@Path("today")
+    @Path("today")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getToday(@HeaderParam("token") String token) {
       
         CigaretteDAO cigaretteDao = new CigaretteDAO(em);
         return cigarette(token, cigaretteDao.getToday());
     }
+    
+    @GET
+    @Path("total")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response total(@HeaderParam("token") String token) {
+      
+        UserDAO userDao = new UserDAO(em);
+        
+        try{
+            
+            boolean validate = userDao.validate(token);
 
+            if(validate){
+                
+                User user = userDao.findByToken(token);
+                CigaretteDAO cigaretteDao = new CigaretteDAO(em);
+                
+                double spent = cigaretteDao.getTotalSpent(user.getId());
+                int smokedTotal = cigaretteDao.getSmokedTotal(user.getId());
+                int average = cigaretteDao.getAverage(user.getId());
+                double economized = cigaretteDao.getTotalEconomized(user.getId());
+                
+                TotalCigaretteResponse total = new TotalCigaretteResponse(economized, spent, smokedTotal, average);
+                
+                Gson gson = new Gson();
+                String json = gson.toJson(total);
+                return Response.ok(json, MediaType.APPLICATION_JSON).build();  
+            
+            }else{
+                return Response.status(Response.Status.FORBIDDEN).entity("Ação não permitida para esse usuário.").build();  
+            }                  
+
+        }catch(Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();  
+        }
+    }
     
     private Response cigarette(String token, Cigarette cigarette){
         UserDAO userDao = new UserDAO(em);

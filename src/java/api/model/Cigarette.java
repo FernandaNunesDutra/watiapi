@@ -26,13 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "tb_cigarette")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Cigarette.findAll", query = "SELECT c FROM Cigarette c")
-    , @NamedQuery(name = "Cigarette.findById", query = "SELECT c FROM Cigarette c WHERE c.id = :id")
-    , @NamedQuery(name = "Cigarette.findByPackCigarettesPrice", query = "SELECT c FROM Cigarette c WHERE c.packCigarettesPrice = :packCigarettesPrice")
-    , @NamedQuery(name = "Cigarette.findByNumCigarette", query = "SELECT c FROM Cigarette c WHERE c.numCigarette = :numCigarette")
-    , @NamedQuery(name = "Cigarette.findByDateCreation", query = "SELECT c FROM Cigarette c WHERE c.dateCreation = :dateCreation")})
 public class Cigarette implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,17 +41,21 @@ public class Cigarette implements Serializable {
     @Column(name = "date_creation")
     @Temporal(TemporalType.DATE)
     private Date dateCreation;
+    @Column(name = "economized")
+    private Long economized;
+    @Column(name = "spent")
+    private Long spent;
 
     public Cigarette() {
     }
 
-    public Cigarette(Long packCigarettesPrice, Integer numCigarette, Date dateCreation) {
+    public Cigarette(Long packCigarettesPrice, Long economized, Long spent, Integer numCigarette, Date dateCreation) {
         this.packCigarettesPrice = packCigarettesPrice;
         this.numCigarette = numCigarette;
         this.dateCreation = dateCreation;
-    }
-    
-    
+        this.economized = economized;
+        this.spent = spent;
+    }    
 
     public Cigarette(Integer id) {
         this.id = id;
@@ -96,4 +93,20 @@ public class Cigarette implements Serializable {
         this.dateCreation = dateCreation;
     }
 
+    public Long getEconomized() {
+        return economized;
+    }
+
+    public void setEconomized(Long economized) {
+        this.economized = economized;
+    }
+
+    public Long getSpent() {
+        return spent;
+    }
+
+    public void setSpent(Long spent) {
+        this.spent = spent;
+    }
+    
 }

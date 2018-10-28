@@ -72,4 +72,34 @@ public class CigaretteDAO {
            .setParameter("date", cigarette.getDateCreation())
            .executeUpdate();
     }
+    
+    public double getTotalSpent(Long userId){
+        return (double) em.createQuery("SELECT SUM(c.spent) FROM Cigarette c WHERE id_user = :id_user GROUP BY c.id_user")
+                .setParameter(":id_user", userId)
+                .getSingleResult();
+    }
+    
+    public double getTotalEconomized(Long userId){
+        return (double) em.createQuery("SELECT SUM(c.economized) FROM Cigarette c WHERE id_user = :id_user GROUP BY c.id_user")
+                .setParameter(":id_user", userId)
+                .getSingleResult();
+    }
+    
+    public int getSmokedTotal(Long userId){
+        return (int) em.createQuery("SELECT SUM(c.num_cigarette) FROM Cigarette c WHERE id_user = :id_user GROUP BY c.id_user")
+                .setParameter(":id_user", userId)
+                .getSingleResult();
+    }
+    
+    public int getAverage(Long userId){
+        int cigarette = getSmokedTotal(userId);
+        int day = (int) em.createQuery("SELECT COUNT(c.id) FROM Cigarette c WHERE id_user = :id_user")
+                .setParameter(":id_user", userId)
+                .getSingleResult();
+        
+        if(day > 0) 
+            return cigarette/day;
+        
+        return 0;
+    }
 }
