@@ -105,5 +105,4 @@ public class Challenge implements Serializable {
         this.dateCreation = dateCreation;
     }
     
-    
 }

@@ -7,7 +7,6 @@ package api.dao;
 
 import api.model.Challenge;
 import api.model.Challenge_;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +46,7 @@ public class ChallengeDAO {
         return challenges;
     }
     
-     public List<Challenge> getByDate(Date date){
+    public List<Challenge> getByDate(Date date){
         
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<Challenge> criteriaQuery = criteriaBuilder.createQuery(Challenge.class);

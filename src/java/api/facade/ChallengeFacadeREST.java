@@ -12,6 +12,7 @@ import api.response.ChallengesResponse;
 import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -49,9 +50,16 @@ public class ChallengeFacadeREST extends AbstractFacade<Challenge> {
             boolean validate = userDao.validate(token);
 
             if(validate){
-
-                Date dateCreation = new SimpleDateFormat("yyyyMMdd").parse(date);
-                ChallengesResponse response = new ChallengesResponse(challengeDao.getByDate(dateCreation));
+                List<Challenge> challenges;
+                Date creationDate = parseDate(date);
+                
+                if(creationDate == null){
+                    challenges = challengeDao.getAll();
+                }else{
+                    challenges = challengeDao.getByDate(creationDate);
+                }
+                
+                ChallengesResponse response = new ChallengesResponse(challenges);
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
                 
@@ -66,6 +74,23 @@ public class ChallengeFacadeREST extends AbstractFacade<Challenge> {
         }
     }
 
+    
+    private Date parseDate(String date){
+        Date creationDate;
+        
+        try{
+           
+            creationDate = new SimpleDateFormat("yyyyMMdd").parse(date);
+        
+        }catch(Exception e){
+            
+           creationDate = null;
+        
+        }
+        
+        return creationDate;
+    }
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;

@@ -5,13 +5,14 @@
  */
 package api.facade;
 
-import api.dao.TipDao;
+import api.dao.TipDAO;
 import api.dao.UserDAO;
 import api.model.Tip;
 import api.response.TipsResponse;
 import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -42,7 +43,7 @@ public class TipFacadeREST extends AbstractFacade<Tip> {
     public Response all(@HeaderParam("token") String token, @QueryParam("date") String date) {
       
         UserDAO userDao = new UserDAO(em);
-        TipDao tipDao = new TipDao(em);
+        TipDAO tipDao = new TipDAO(em);
         
         try{
 
@@ -50,8 +51,16 @@ public class TipFacadeREST extends AbstractFacade<Tip> {
 
             if(validate){
 
-                Date dateCreation = new SimpleDateFormat("yyyyMMdd").parse(date);
-                TipsResponse response = new TipsResponse(tipDao.getByDate(dateCreation));
+                List<Tip> tips;
+                Date creationDate = parseDate(date);
+                
+                if(creationDate == null) {
+                    tips = tipDao.getAll();
+                }else{
+                    tips = tipDao.getByDate(creationDate);
+                }          
+                
+                TipsResponse response = new TipsResponse(tips);
                 Gson gson = new Gson();
                 String json = gson.toJson(response);
                 
@@ -71,4 +80,19 @@ public class TipFacadeREST extends AbstractFacade<Tip> {
         return em;
     }
     
+    private Date parseDate(String date){
+        Date creationDate;
+        
+        try{
+           
+            creationDate = new SimpleDateFormat("yyyyMMdd").parse(date);
+        
+        }catch(Exception e){
+            
+           creationDate = null;
+        
+        }
+        
+        return creationDate;
+    }
 }

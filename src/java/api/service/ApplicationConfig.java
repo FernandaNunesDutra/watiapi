@@ -30,6 +30,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(api.facade.ChallengeFacadeREST.class);
+        resources.add(api.facade.CigaretteFacadeREST.class);
         resources.add(api.facade.TipFacadeREST.class);
         resources.add(api.facade.UserFacadeREST.class);
     }
