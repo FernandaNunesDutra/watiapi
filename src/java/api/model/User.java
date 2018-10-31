@@ -6,18 +6,22 @@
 package api.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -26,6 +30,12 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "tb_user")
 public class User implements Serializable {
+
+    @Lob
+    @Column(name = "password")
+    private byte[] password;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Collection<TipUser> tipUserCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -51,9 +61,6 @@ public class User implements Serializable {
     @Size(max = 100)
     @Column(name = "name")
     private String name;
-    @Lob
-    @Column(name = "password")
-    private byte[] password;
     @Column(name = "pesquisa_enviada")
     private Boolean pesquisaEnviada;
     @Size(max = 255)
@@ -140,13 +147,6 @@ public class User implements Serializable {
         this.name = name;
     }
 
-    public byte[] getPassword() {
-        return password;
-    }
-
-    public void setPassword(byte[] password) {
-        this.password = password;
-    }
 
     public Boolean getPesquisaEnviada() {
         return pesquisaEnviada;
@@ -194,6 +194,23 @@ public class User implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public byte[] getPassword() {
+        return password;
+    }
+
+    public void setPassword(byte[] password) {
+        this.password = password;
+    }
+
+    @XmlTransient
+    public Collection<TipUser> getTipUserCollection() {
+        return tipUserCollection;
+    }
+
+    public void setTipUserCollection(Collection<TipUser> tipUserCollection) {
+        this.tipUserCollection = tipUserCollection;
     }
 
 }

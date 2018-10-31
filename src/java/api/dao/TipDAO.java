@@ -34,10 +34,10 @@ public class TipDAO {
     public List<Tip> getAll(){
         
         List<Tip> tips = new ArrayList<>();
-        Query query = em.createQuery("Select c FROM Tip c", Tip.class); 
-        
+  
         try{
         
+            Query query = em.createQuery("Select c FROM Tip c", Tip.class); 
             tips = (List<Tip>)query.getResultList();
         
         }catch(Exception e){
@@ -65,4 +65,5 @@ public class TipDAO {
         
         return tips;
     }
+     
 }

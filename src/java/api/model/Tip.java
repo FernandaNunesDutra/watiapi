@@ -6,20 +6,21 @@
 package api.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -27,15 +28,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "tb_tip")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Tip.findAll", query = "SELECT t FROM Tip t")
-    , @NamedQuery(name = "Tip.findById", query = "SELECT t FROM Tip t WHERE t.id = :id")
-    , @NamedQuery(name = "Tip.findByDescription", query = "SELECT t FROM Tip t WHERE t.description = :description")
-    , @NamedQuery(name = "Tip.findByTitle", query = "SELECT t FROM Tip t WHERE t.title = :title")
-    , @NamedQuery(name = "Tip.findByValue", query = "SELECT t FROM Tip t WHERE t.value = :value")
-    , @NamedQuery(name = "Tip.findByDateCreation", query = "SELECT t FROM Tip t WHERE t.dateCreation = :dateCreation")})
 public class Tip implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tip")
+    private Collection<TipUser> tipUserCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -100,31 +96,15 @@ public class Tip implements Serializable {
 
     public void setDateCreation(Date dateCreation) {
         this.dateCreation = dateCreation;
+    } 
+
+    @XmlTransient
+    public Collection<TipUser> getTipUserCollection() {
+        return tipUserCollection;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Tip)) {
-            return false;
-        }
-        Tip other = (Tip) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "api.model.Tip[ id=" + id + " ]";
+    public void setTipUserCollection(Collection<TipUser> tipUserCollection) {
+        this.tipUserCollection = tipUserCollection;
     }
     
 }

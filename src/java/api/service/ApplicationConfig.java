@@ -32,6 +32,7 @@ public class ApplicationConfig extends Application {
         resources.add(api.facade.ChallengeFacadeREST.class);
         resources.add(api.facade.CigaretteFacadeREST.class);
         resources.add(api.facade.TipFacadeREST.class);
+        resources.add(api.facade.TipUserFacadeREST.class);
         resources.add(api.facade.UserFacadeREST.class);
     }
     
