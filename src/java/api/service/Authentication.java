@@ -19,7 +19,7 @@ public class Authentication {
     public static String generateToken(String email, long id) {
         SecureRandom random = new SecureRandom();
         String randomString = new BigInteger(130, random).toString(32);
-        String keySource = randomString + new Date() + id + email;
+        String keySource = randomString + new Date() + id;
         byte[] tokenByte = Base64.getEncoder().encode(keySource.getBytes());
         String token = new String(tokenByte);
         

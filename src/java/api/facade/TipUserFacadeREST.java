@@ -5,16 +5,11 @@
  */
 package api.facade;
 
-import api.dao.CigaretteDAO;
 import api.dao.TipUserDAO;
 import api.dao.UserDAO;
-import api.model.Cigarette;
 import api.model.TipUser;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -40,8 +35,8 @@ public class TipUserFacadeREST extends AbstractFacade<TipUser> {
         super(TipUser.class);
     }
 
-     @POST
-    @Path("today")
+    @POST
+    @Path("like")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response like(@HeaderParam("token") String token, String tip) {
       

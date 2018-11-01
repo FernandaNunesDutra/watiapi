@@ -30,8 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "tb_tip")
 public class Tip implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tip")
-    private Collection<TipUser> tipUserCollection;
+    /*@OneToMany(cascade = CascadeType.ALL, mappedBy = "tip")
+    private Collection<TipUser> tipUserCollection;*/
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -98,13 +98,13 @@ public class Tip implements Serializable {
         this.dateCreation = dateCreation;
     } 
 
-    @XmlTransient
+    /*@XmlTransient
     public Collection<TipUser> getTipUserCollection() {
         return tipUserCollection;
     }
 
     public void setTipUserCollection(Collection<TipUser> tipUserCollection) {
         this.tipUserCollection = tipUserCollection;
-    }
+    }*/
     
 }
