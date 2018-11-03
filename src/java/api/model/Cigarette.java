@@ -13,12 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -34,6 +31,8 @@ public class Cigarette implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    @Column(name = "user_id")
+    private Integer userId;
     @Column(name = "pack_cigarettes_price")
     private Long packCigarettesPrice;
     @Column(name = "num_cigarette")
@@ -108,5 +107,14 @@ public class Cigarette implements Serializable {
     public void setSpent(Long spent) {
         this.spent = spent;
     }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+ 
     
 }

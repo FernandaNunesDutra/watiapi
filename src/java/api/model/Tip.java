@@ -19,8 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -30,8 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "tb_tip")
 public class Tip implements Serializable {
 
-    /*@OneToMany(cascade = CascadeType.ALL, mappedBy = "tip")
-    private Collection<TipUser> tipUserCollection;*/
+    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "tip")
+    //private Collection<TipUser> tipUserCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -98,7 +98,7 @@ public class Tip implements Serializable {
         this.dateCreation = dateCreation;
     } 
 
-    /*@XmlTransient
+    /*@Transient
     public Collection<TipUser> getTipUserCollection() {
         return tipUserCollection;
     }

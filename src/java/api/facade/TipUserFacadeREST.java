@@ -8,6 +8,8 @@ package api.facade;
 import api.dao.TipUserDAO;
 import api.dao.UserDAO;
 import api.model.TipUser;
+import api.response.TipUserResponse;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javax.ejb.Stateless;
@@ -50,14 +52,17 @@ public class TipUserFacadeREST extends AbstractFacade<TipUser> {
                 JsonParser parser = new JsonParser();                
                 JsonObject o = parser.parse(tip).getAsJsonObject();
                 
-                Long tipId =  o.get("tip_id").getAsLong();
-                Long userId =  o.get("user_id").getAsLong();
+                int tipId =  o.get("id_tip").getAsInt();
+                Long userId =  o.get("id_user").getAsLong();                
                 boolean like =  o.get("like").getAsBoolean();
                 
                 TipUserDAO tipUserDao = new TipUserDAO(em);
                 tipUserDao.alter(tipId, userId, like);
                 
-                return Response.ok().build();  
+                Gson gson = new Gson();
+                String json = gson.toJson(new TipUserResponse(tipId, userId));
+                
+                return Response.ok(json, MediaType.APPLICATION_JSON).build();   
             
             }else{
                 return Response.status(Response.Status.FORBIDDEN).entity("Ação não permitida para esse usuário.").build();  

@@ -6,8 +6,9 @@
 package api.dao;
 
 import api.model.TipUser;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 /**
  *
@@ -23,55 +24,73 @@ public class TipUserDAO {
     
     public void alter(long tipId, long userId, boolean like){
      
-        if(getById(tipId, userId) == null){
-            insert(tipId, userId, like);
-            return;
-        }
+        int l = (like) ? 1 : 0;
+        Long count = count(tipId, userId);
         
-        update(tipId, userId, like);
+        if(count == 0){
+            insert(tipId, userId, l);
+        }else{
+           update(tipId, userId, l);
+        }   
     }
     
-    public TipUser getById(long tipId, long userId){
-        TipUser tipUser = new TipUser();
-
+    public Long count(long tipId, long userId)
+    {
+                
         try{
-            Query query = em.createQuery("Select t FROM Tip t WHERE t.id_user = :id_user AND t.id_tip = : id_tip", TipUser.class); 
-            query.setParameter("id_user", userId);
-            query.setParameter("id_tip", tipId);
+                        
+            String query = String.format("SELECT COUNT(*) FROM tb_tip_user t WHERE t.id_user= %d AND t.id_tip = %d", userId, tipId);
+
+            Long count = (Long)em.createNativeQuery(query).getSingleResult();
             
-            tipUser = (TipUser) query.getSingleResult();
+            return count;
+                    
+        }catch(Exception e){
+            return Long.parseLong("0");
+        }
+    }
+    
+    public TipUser getById(long tipId, long userId)
+    {
+                
+        try{
+                        
+            String query = String.format("SELECT * FROM tb_tip_user WHERE id_user = %d AND id_tip = %d", userId, tipId);
+
+            TipUser tipUser = (TipUser) em.createNativeQuery(query)
+                                            .getSingleResult();
+            
+            return tipUser;
         
         }catch(Exception e){
-            System.out.print("Erro ao buscar usuário no banco.");
+            return null;
         }
-        
-        return tipUser;
     }
         
-    public void update(long tipId, long userId, boolean like){
+    public void update(long tipId, long userId, int like){
          
          try{
              
-            Query query = em.createQuery("UPDATE TipUser u SET u.like = :like WHERE u.id_user= :id_user AND u.id_tip-:id_tip", TipUser.class); 
-            query.setParameter("like", like);
-            query.setParameter("id_tip", tipId);
-            query.setParameter("id_user", userId);
-            query.executeUpdate();
+            String query = String.format("UPDATE tb_tip_user SET like_tip = %d WHERE id_user= %d AND id_tip=%d", like, userId, tipId); 
+
+            em.createNativeQuery(query).executeUpdate();
         
         }catch(Exception e){
             System.out.print("Erro ao atualizar gostei das dicas.");
         }
     } 
     
-    public void insert(long tipId, long userId, boolean like){
-        String query = "INSERT INTO tb_tip_user (id_tip, id_user, like) "
-                     + "VALUES(:id_tip , :id_user, :like)";
+    public void insert(long tipId, long userId, int like){
 
-        em.createNativeQuery(query)
-            .setParameter("like", like)
-            .setParameter("id_tip", tipId)
-            .setParameter("id_user", userId)
-            .executeUpdate();
+        try {
+            String query = String.format("INSERT INTO tb_tip_user (id_tip, id_user, like_tip, date) VALUES( %d , %d , %d , NOW() )", tipId, userId, like);
+            em.createNativeQuery(query).executeUpdate();
+
+
+        } catch (Exception ex) {
+            Logger.getLogger(TipUserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
 }

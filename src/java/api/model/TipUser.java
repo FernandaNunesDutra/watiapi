@@ -31,7 +31,7 @@ public class TipUser implements Serializable {
     protected TipUserPK tipUserPK;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "like")
+    @Column(name = "like_tip")
     private boolean like;
     @Column(name = "date")
     @Temporal(TemporalType.DATE)

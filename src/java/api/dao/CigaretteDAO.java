@@ -74,32 +74,69 @@ public class CigaretteDAO {
     }
     
     public double getTotalSpent(Long userId){
-        return (double) em.createQuery("SELECT SUM(c.spent) FROM Cigarette c WHERE id_user = :id_user GROUP BY c.id_user")
-                .setParameter(":id_user", userId)
-                .getSingleResult();
+        
+        try{
+            String query = String.format("SELECT SUM(c.spent) FROM tb_cigarette c WHERE c.id_user = %d", userId);
+
+            double spent = (double) em.createNativeQuery(query)
+                            .getSingleResult();
+            return spent;
+        }
+        catch(NullPointerException e)
+        {
+            return 0.0;
+        }        
+       
     }
     
     public double getTotalEconomized(Long userId){
-        return (double) em.createQuery("SELECT SUM(c.economized) FROM Cigarette c WHERE id_user = :id_user GROUP BY c.id_user")
-                .setParameter(":id_user", userId)
-                .getSingleResult();
+        
+        try{
+            
+            String query = String.format("SELECT SUM(c.economized) FROM tb_cigarette c WHERE c.id_user = %d", userId);
+
+            double economized = (double) em.createNativeQuery(query)
+                            .getSingleResult();
+            return economized;
+        }
+        catch(NullPointerException e)
+        {
+            return 0.0;
+        }      
     }
     
-    public int getSmokedTotal(Long userId){
-        return (int) em.createQuery("SELECT SUM(c.num_cigarette) FROM Cigarette c WHERE id_user = :id_user GROUP BY c.id_user")
-                .setParameter(":id_user", userId)
-                .getSingleResult();
+    public int getSmokedTotal(Long userId){        
+        
+        try{
+            
+            String query = String.format("SELECT SUM(c.num_cigarette) FROM tb_cigarette c WHERE c.id_user = %d", userId);
+
+            int smoked = (int) em.createNativeQuery(query)
+                            .getSingleResult();
+            return smoked;
+        }
+        catch(NullPointerException e)
+        {
+            return 0;
+        }
     }
     
     public int getAverage(Long userId){
-        int cigarette = getSmokedTotal(userId);
-        int day = (int) em.createQuery("SELECT COUNT(c.id) FROM Cigarette c WHERE id_user = :id_user")
-                .setParameter(":id_user", userId)
-                .getSingleResult();
-        
-        if(day > 0) 
-            return cigarette/day;
-        
+ 
+          try{
+            
+            int cigarette = getSmokedTotal(userId);
+            String query = String.format("SELECT SUM(c.id) FROM tb_cigarette c WHERE c.id_user = %d", userId);
+            int day = (int) em.createNativeQuery(query)
+                            .getSingleResult();
+            if(day > 0)
+                return cigarette/day;
+        }
+        catch(NullPointerException e)
+        {
+            return 0;
+        }
+          
         return 0;
     }
 }
