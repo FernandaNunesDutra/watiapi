@@ -34,26 +34,27 @@ public class Cigarette implements Serializable {
     @Column(name = "user_id")
     private Integer userId;
     @Column(name = "pack_cigarettes_price")
-    private Long packCigarettesPrice;
+    private Double packCigarettesPrice;
     @Column(name = "num_cigarette")
     private Integer numCigarette;
     @Column(name = "date_creation")
     @Temporal(TemporalType.DATE)
     private Date dateCreation;
     @Column(name = "economized")
-    private Long economized;
+    private Double economized;
     @Column(name = "spent")
-    private Long spent;
+    private Double spent;
 
     public Cigarette() {
     }
 
-    public Cigarette(Long packCigarettesPrice, Long economized, Long spent, Integer numCigarette, Date dateCreation) {
+    public Cigarette(double packCigarettesPrice, double economized, double spent, Integer numCigarette, Date dateCreation, int userId) {
         this.packCigarettesPrice = packCigarettesPrice;
         this.numCigarette = numCigarette;
         this.dateCreation = dateCreation;
         this.economized = economized;
         this.spent = spent;
+        this.userId = userId;
     }    
 
     public Cigarette(Integer id) {
@@ -68,11 +69,11 @@ public class Cigarette implements Serializable {
         this.id = id;
     }
 
-    public Long getPackCigarettesPrice() {
+    public double getPackCigarettesPrice() {
         return packCigarettesPrice;
     }
 
-    public void setPackCigarettesPrice(Long packCigarettesPrice) {
+    public void setPackCigarettesPrice(double packCigarettesPrice) {
         this.packCigarettesPrice = packCigarettesPrice;
     }
 
@@ -92,19 +93,19 @@ public class Cigarette implements Serializable {
         this.dateCreation = dateCreation;
     }
 
-    public Long getEconomized() {
+    public double getEconomized() {
         return economized;
     }
 
-    public void setEconomized(Long economized) {
+    public void setEconomized(double economized) {
         this.economized = economized;
     }
 
-    public Long getSpent() {
+    public double getSpent() {
         return spent;
     }
 
-    public void setSpent(Long spent) {
+    public void setSpent(double spent) {
         this.spent = spent;
     }
 

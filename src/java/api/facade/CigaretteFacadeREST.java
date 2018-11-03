@@ -58,15 +58,16 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
                 
                 JsonObject o = parser.parse(cigarette).getAsJsonObject();
                 
-                Long packCigarettesPrice =  o.get("pack_cigarettes_price").getAsLong();
-                Date date = formatter.parse(o.get("date_creation").getAsString());
+                double packCigarettesPrice =  o.get("pack_cigarettes_price").getAsDouble();
+                String dateString = o.get("date_creation").getAsString();
+                Date date = formatter.parse(dateString);
                 int numCigarette = o.get("num_cigarette").getAsInt();
-                Long economized =  o.get("economized").getAsLong();
-                Long spent =  o.get("spent").getAsLong();
-                
+                double economized =  o.get("economized").getAsDouble();
+                double spent =  o.get("spent").getAsDouble();;
+                int userId = o.get("id_user").getAsInt();
                 
                 CigaretteDAO cigaretteDao = new CigaretteDAO(em);
-                cigaretteDao.insert(new Cigarette(packCigarettesPrice,economized, spent, numCigarette, date));
+                cigaretteDao.insert(new Cigarette(packCigarettesPrice,economized, spent, numCigarette, date, userId));
                 
                 Gson gson = new Gson();
                 String json = gson.toJson(cigaretteDao.getToday());
