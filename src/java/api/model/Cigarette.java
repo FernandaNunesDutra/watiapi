@@ -6,7 +6,14 @@
 package api.model;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +39,7 @@ public class Cigarette implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
     @Column(name = "pack_cigarettes_price")
     private Double packCigarettesPrice;
     @Column(name = "num_cigarette")
@@ -48,7 +55,7 @@ public class Cigarette implements Serializable {
     public Cigarette() {
     }
 
-    public Cigarette(double packCigarettesPrice, double economized, double spent, Integer numCigarette, Date dateCreation, int userId) {
+    public Cigarette(double packCigarettesPrice, double economized, double spent, Integer numCigarette, Date dateCreation, Long userId) {
         this.packCigarettesPrice = packCigarettesPrice;
         this.numCigarette = numCigarette;
         this.dateCreation = dateCreation;
@@ -109,13 +116,33 @@ public class Cigarette implements Serializable {
         this.spent = spent;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
- 
+
     
+    public String getFormatEconomized() {
+        return format(String.valueOf(economized));
+    }
+    
+    public String getFormatSpent() {
+        return format(String.valueOf(spent));
+    }
+    
+    public String getFormatPricePack() {
+        return format(String.valueOf(packCigarettesPrice));
+    }
+        
+    private String format(String number){
+        String output;        
+        
+        output = number.replace(".", "");
+        output = number.replace(',', '.');
+        
+        return output;
+    }
 }

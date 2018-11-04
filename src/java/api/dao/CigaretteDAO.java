@@ -6,16 +6,10 @@
 package api.dao;
 
 import api.model.Cigarette;
-import api.model.Cigarette_;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.EntityManager;
-import javax.persistence.TemporalType;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.NoResultException;
 
 /**
  *
@@ -29,7 +23,7 @@ public class CigaretteDAO {
         this.em = em;
     }   
     
-    public Cigarette getToday(){
+    public Cigarette getToday(Long userId){
         Date creationDate;
         
         try{
@@ -40,37 +34,69 @@ public class CigaretteDAO {
            return null;  
         }
         
-        return getByDate(creationDate);  
+        return getByDate(creationDate, userId);  
     }
     
-    public Cigarette getByDate(Date date){
+    public Cigarette getByDate(Date date, Long userId){
         
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Cigarette> criteriaQuery = criteriaBuilder.createQuery(Cigarette.class);
-        Root<Cigarette> root = criteriaQuery.from(em.getMetamodel().entity(Cigarette.class));
-        
-        ParameterExpression<Date> parameter = criteriaBuilder.parameter(Date.class);
-        Predicate dateCreationPredicate = criteriaBuilder.greaterThanOrEqualTo(root.get(Cigarette_.dateCreation).as(Date.class), parameter);
-        Predicate dateCreationOrPredicate = criteriaBuilder.or(dateCreationPredicate, root.get(Cigarette_.dateCreation).isNull());
+        try{
+           SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+           String dateString  = formatter.format(date);
+           String query = String.format("SELECT * FROM tb_cigarette WHERE id_user = %d AND date_creation='%s'", userId, dateString, Cigarette.class);
 
-        criteriaQuery.where(dateCreationOrPredicate);
+           Cigarette dateCigarette = (Cigarette)em.createNativeQuery(query, Cigarette.class).getSingleResult();
 
-        Cigarette dateCigarette = em.createQuery(criteriaQuery)
-                .setParameter(parameter, date, TemporalType.DATE)
-                .getSingleResult();
+           return new Cigarette();
+        }
+        catch(NoResultException ex)
+        {
+            return null;
+        }
         
-        return dateCigarette;
+    }
+    
+    
+    public void alter(Cigarette cigarette){
+    
+        if(getByDate(cigarette.getDateCreation(), cigarette.getUserId()) == null){
+            insert(cigarette);
+        }else{
+            update(cigarette);
+        }
     }
     
     public void insert(Cigarette cigarette){
-        String query = "INSERT INTO tb_cigerette (pack_cigarettes_price, num_cigarette, date_creation) "
-                     + "VALUES(:pack , :num, :date)";
+        
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String date  = formatter.format(cigarette.getDateCreation());
+ 
+        String query = String.format("INSERT INTO tb_cigarette (pack_cigarettes_price, num_cigarette, date_creation,id_user, economized, spent) "
+                + "         VALUES(%s , %d, '%s', %d, %s , %s)" ,
+                            cigarette.getFormatPricePack(), 
+                            cigarette.getNumCigarette(), 
+                            date, 
+                            cigarette.getUserId(),
+                            cigarette.getFormatEconomized(),
+                            cigarette.getFormatSpent()); 
 
-        em.createNativeQuery(query)
-           .setParameter("pack", cigarette.getPackCigarettesPrice())
-           .setParameter("num", cigarette.getNumCigarette())                
-           .setParameter("date", cigarette.getDateCreation())
-           .executeUpdate();
+        em.createNativeQuery(query).executeUpdate();
+    }
+    
+    public void update(Cigarette cigarette){
+        
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String date  = formatter.format(cigarette.getDateCreation());
+ 
+        String query = String.format("UPDATE tb_cigarette SET pack_cigarettes_price = %s, num_cigarette = %d, "
+                + " economized = %s, spent = %s WHERE id_user = %d AND date_creation = '%s'", 
+                            cigarette.getFormatPricePack(), 
+                            cigarette.getNumCigarette(), 
+                            cigarette.getFormatEconomized(),
+                            cigarette.getFormatSpent(),
+                            cigarette.getUserId(),
+                            date); 
+
+        em.createNativeQuery(query).executeUpdate();
     }
     
     public double getTotalSpent(Long userId){
@@ -78,7 +104,7 @@ public class CigaretteDAO {
         try{
             String query = String.format("SELECT SUM(c.spent) FROM tb_cigarette c WHERE c.id_user = %d", userId);
 
-            double spent = (double) em.createNativeQuery(query)
+            double spent = (double) em.createNativeQuery(query, Double.class)
                             .getSingleResult();
             return spent;
         }
@@ -95,7 +121,7 @@ public class CigaretteDAO {
             
             String query = String.format("SELECT SUM(c.economized) FROM tb_cigarette c WHERE c.id_user = %d", userId);
 
-            double economized = (double) em.createNativeQuery(query)
+            double economized = (double) em.createNativeQuery(query, Double.class)
                             .getSingleResult();
             return economized;
         }
@@ -111,7 +137,7 @@ public class CigaretteDAO {
             
             String query = String.format("SELECT SUM(c.num_cigarette) FROM tb_cigarette c WHERE c.id_user = %d", userId);
 
-            int smoked = (int) em.createNativeQuery(query)
+            int smoked = (int) em.createNativeQuery(query, Integer.class)
                             .getSingleResult();
             return smoked;
         }
@@ -127,7 +153,7 @@ public class CigaretteDAO {
             
             int cigarette = getSmokedTotal(userId);
             String query = String.format("SELECT SUM(c.id) FROM tb_cigarette c WHERE c.id_user = %d", userId);
-            int day = (int) em.createNativeQuery(query)
+            int day = (int) em.createNativeQuery(query, Integer.class)
                             .getSingleResult();
             if(day > 0)
                 return cigarette/day;

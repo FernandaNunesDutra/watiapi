@@ -54,7 +54,7 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
 
             if(validate){
                 JsonParser parser = new JsonParser();
-                SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                 
                 JsonObject o = parser.parse(cigarette).getAsJsonObject();
                 
@@ -64,13 +64,13 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
                 int numCigarette = o.get("num_cigarette").getAsInt();
                 double economized =  o.get("economized").getAsDouble();
                 double spent =  o.get("spent").getAsDouble();;
-                int userId = o.get("id_user").getAsInt();
+                Long userId = o.get("id_user").getAsLong();
                 
                 CigaretteDAO cigaretteDao = new CigaretteDAO(em);
-                cigaretteDao.insert(new Cigarette(packCigarettesPrice,economized, spent, numCigarette, date, userId));
+                cigaretteDao.alter(new Cigarette(packCigarettesPrice, economized, spent, numCigarette, date, userId));
                 
                 Gson gson = new Gson();
-                String json = gson.toJson(cigaretteDao.getToday());
+                String json = gson.toJson(cigaretteDao.getToday(userId));
                 return Response.ok(json, MediaType.APPLICATION_JSON).build();  
             
             }else{
@@ -86,9 +86,19 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
     @Path("today")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getToday(@HeaderParam("token") String token) {
-      
-        CigaretteDAO cigaretteDao = new CigaretteDAO(em);
-        return cigarette(token, cigaretteDao.getToday());
+        Cigarette today = null;
+        UserDAO userDao = new UserDAO(em);
+        
+        boolean validate = userDao.validate(token);
+
+        if(validate){
+            
+            User user = userDao.findByToken(token);
+            CigaretteDAO cigaretteDao = new CigaretteDAO(em);
+            today = cigaretteDao.getToday(user.getId());
+        }
+        
+        return cigarette(token, today);
     }
     
     @GET
