@@ -6,6 +6,7 @@
 package api.dao;
 
 import api.model.Cigarette;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.EntityManager;
@@ -131,15 +132,14 @@ public class CigaretteDAO {
         }      
     }
     
-    public int getSmokedTotal(Long userId){        
+    public long getSmokedTotal(Long userId){        
         
         try{
             
             String query = String.format("SELECT SUM(c.num_cigarette) FROM tb_cigarette c WHERE c.id_user = %d", userId);
 
-            int smoked = (int) em.createNativeQuery(query)
-                            .getSingleResult();
-            return smoked;
+            Object smoked = em.createNativeQuery(query).getSingleResult();
+            return Long.parseLong(smoked.toString());
         }
         catch(NullPointerException e)
         {
@@ -147,16 +147,20 @@ public class CigaretteDAO {
         }
     }
     
-    public int getAverage(Long userId){
+    public long getAverage(Long userId){
  
           try{
             
-            int cigarette = getSmokedTotal(userId);
-            String query = String.format("SELECT SUM(c.id) FROM tb_cigarette c WHERE c.id_user = %d", userId);
-            int day = (int) em.createNativeQuery(query)
-                            .getSingleResult();
-            if(day > 0)
-                return cigarette/day;
+            long cigarette = getSmokedTotal(userId);
+            String query = String.format("SELECT COUNT(c.id) FROM tb_cigarette c WHERE c.id_user = %d", userId);
+            long day = (Long) em.createNativeQuery(query)
+                            .getSingleResult(); 
+                        
+            if(day > 0){
+                long average = (cigarette/day);
+                return average;
+            }
+                
         }
         catch(NullPointerException e)
         {

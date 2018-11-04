@@ -118,8 +118,8 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
                 CigaretteDAO cigaretteDao = new CigaretteDAO(em);
                 
                 double spent = cigaretteDao.getTotalSpent(user.getId());
-                int smokedTotal = cigaretteDao.getSmokedTotal(user.getId());
-                int average = cigaretteDao.getAverage(user.getId());
+                long smokedTotal = cigaretteDao.getSmokedTotal(user.getId());
+                long average = cigaretteDao.getAverage(user.getId());
                 double economized = cigaretteDao.getTotalEconomized(user.getId());
                 
                 TotalCigaretteResponse total = new TotalCigaretteResponse(economized, spent, smokedTotal, average);
@@ -127,6 +127,33 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
                 Gson gson = new Gson();
                 String json = gson.toJson(total);
                 return Response.ok(json, MediaType.APPLICATION_JSON).build();  
+            
+            }else{
+                return Response.status(Response.Status.FORBIDDEN).entity("Ação não permitida para esse usuário.").build();  
+            }                  
+
+        }catch(Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();  
+        }
+    }
+    
+    @GET
+    @Path("ranking")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response ranking(@HeaderParam("token") String token) {
+      
+        UserDAO userDao = new UserDAO(em);
+        
+        try{
+            
+            boolean validate = userDao.validate(token);
+
+            if(validate){
+                JsonParser parser = new JsonParser();
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                
+                
+                return Response.ok().build();  
             
             }else{
                 return Response.status(Response.Status.FORBIDDEN).entity("Ação não permitida para esse usuário.").build();  
@@ -158,8 +185,7 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();  
         }
     }
-    
-    
+      
     @Override
     protected EntityManager getEntityManager() {
         return em;

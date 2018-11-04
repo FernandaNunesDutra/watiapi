@@ -12,10 +12,10 @@ package api.response;
 public class TotalCigaretteResponse {
     public double economized;
     public double spent;
-    public int smokedTotal;
-    public int average;
+    public long smokedTotal;
+    public long average;
 
-    public TotalCigaretteResponse(double economized, double spent, int smokedTotal, int average) {
+    public TotalCigaretteResponse(double economized, double spent, long smokedTotal, long average) {
         this.smokedTotal = smokedTotal;
         this.economized = economized;
         this.average = average;
