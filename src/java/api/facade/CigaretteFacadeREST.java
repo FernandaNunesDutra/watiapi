@@ -150,7 +150,6 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
 
             if(validate){
                 JsonParser parser = new JsonParser();
-                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                 
                 
                 return Response.ok().build();  
