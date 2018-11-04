@@ -46,7 +46,7 @@ public class CigaretteDAO {
 
            Cigarette dateCigarette = (Cigarette)em.createNativeQuery(query, Cigarette.class).getSingleResult();
 
-           return new Cigarette();
+           return dateCigarette;
         }
         catch(NoResultException ex)
         {
@@ -104,7 +104,7 @@ public class CigaretteDAO {
         try{
             String query = String.format("SELECT SUM(c.spent) FROM tb_cigarette c WHERE c.id_user = %d", userId);
 
-            double spent = (double) em.createNativeQuery(query, Double.class)
+            double spent = (double) em.createNativeQuery(query)
                             .getSingleResult();
             return spent;
         }
@@ -121,7 +121,7 @@ public class CigaretteDAO {
             
             String query = String.format("SELECT SUM(c.economized) FROM tb_cigarette c WHERE c.id_user = %d", userId);
 
-            double economized = (double) em.createNativeQuery(query, Double.class)
+            double economized = (double) em.createNativeQuery(query)
                             .getSingleResult();
             return economized;
         }
@@ -137,7 +137,7 @@ public class CigaretteDAO {
             
             String query = String.format("SELECT SUM(c.num_cigarette) FROM tb_cigarette c WHERE c.id_user = %d", userId);
 
-            int smoked = (int) em.createNativeQuery(query, Integer.class)
+            int smoked = (int) em.createNativeQuery(query)
                             .getSingleResult();
             return smoked;
         }
@@ -153,7 +153,7 @@ public class CigaretteDAO {
             
             int cigarette = getSmokedTotal(userId);
             String query = String.format("SELECT SUM(c.id) FROM tb_cigarette c WHERE c.id_user = %d", userId);
-            int day = (int) em.createNativeQuery(query, Integer.class)
+            int day = (int) em.createNativeQuery(query)
                             .getSingleResult();
             if(day > 0)
                 return cigarette/day;
