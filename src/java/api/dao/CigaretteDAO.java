@@ -6,9 +6,13 @@
 package api.dao;
 
 import api.model.Cigarette;
-import java.math.BigDecimal;
+import api.model.CigarettesAverage;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -130,6 +134,87 @@ public class CigaretteDAO {
         {
             return 0.0;
         }      
+    }
+    
+    public List<Cigarette> getAverageSmoked(Long userId){
+                
+        return getSmokedBetweenDate(userId, oneMonthAgo(), new Date());
+    }
+    
+    public List<CigarettesAverage> getAverageSmoked(Date firstDate, Date secondDate){
+        
+        List<CigarettesAverage> cigarettes = new ArrayList<>();
+        
+        try{
+            
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String first = formatter.format(firstDate);
+            String second = formatter.format(secondDate);
+
+            String query = String.format("SELECT SUM(num_cigarette) AS total_cigarette , COUNT(id) AS total_user, date_creation FROM tb_cigarette c WHERE date_creation BETWEEN '%s' AND '%s' GROUP BY date_creation",  first, second);
+
+            List<Object[]> averageByDay = em.createNativeQuery(query).getResultList();          
+           
+            for(Object[] average : averageByDay){                
+                int totalCigarette = Integer.parseInt(average[0].toString()) ;
+                int totalUser = Integer.parseInt(average[1].toString()) ;
+                Date day = formatter.parse(average[2].toString());
+                        
+                cigarettes.add(new CigarettesAverage(totalCigarette, totalUser, day));
+            }
+ 
+        }
+        catch(Exception e)
+        {
+        }
+
+        return cigarettes;
+    }
+    
+    public List<CigarettesAverage> getOneMonthAgoAverageSmoked(){
+        return getAverageSmoked(oneMonthAgo(), new Date()); 
+    }
+    
+    private Date oneMonthAgo(){
+        Locale myLocale = Locale.getDefault();
+        Calendar today = Calendar.getInstance(myLocale);
+        today.add(Calendar.MONTH, -1);
+        Date oneMonthAgo = today.getTime();
+        
+        return oneMonthAgo;
+    }
+    
+    public List<CigarettesAverage> getOneMonthAgoSmoked(Long userId){
+        List<CigarettesAverage> cigarettesAverage = new ArrayList<>();
+        List<Cigarette> cigarettes = getSmokedBetweenDate(userId, oneMonthAgo(), new Date());
+        
+        for(Cigarette cigarette : cigarettes){
+            cigarettesAverage.add(new CigarettesAverage(cigarette.getNumCigarette(), 1, cigarette.getDateCreation()));
+        }
+        
+        return cigarettesAverage;
+    }
+    
+    public List<Cigarette> getSmokedBetweenDate(Long userId, Date firstDate, Date secondDate){
+        List<Cigarette> cigarettes = new ArrayList<>();
+        
+        try{
+            
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String first = formatter.format(firstDate);
+            String second = formatter.format(secondDate);
+            
+            String query = String.format("SELECT * FROM tb_cigarette c WHERE c.id_user = %d AND date_creation BETWEEN '%s' AND '%s'", userId, first, second);
+
+            cigarettes = em.createNativeQuery(query, Cigarette.class).getResultList();
+           
+        }
+        catch(Exception e)
+        {
+            
+        }
+        
+        return cigarettes;
     }
     
     public long getSmokedTotal(Long userId){        

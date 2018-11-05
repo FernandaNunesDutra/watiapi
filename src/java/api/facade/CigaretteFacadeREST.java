@@ -8,13 +8,16 @@ package api.facade;
 import api.dao.CigaretteDAO;
 import api.dao.UserDAO;
 import api.model.Cigarette;
+import api.model.CigarettesAverage;
 import api.model.User;
+import api.response.RankingResponse;
 import api.response.TotalCigaretteResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -63,7 +66,7 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
                 Date date = formatter.parse(dateString);
                 int numCigarette = o.get("num_cigarette").getAsInt();
                 double economized =  o.get("economized").getAsDouble();
-                double spent =  o.get("spent").getAsDouble();;
+                double spent =  o.get("spent").getAsDouble();
                 Long userId = o.get("id_user").getAsLong();
                 
                 CigaretteDAO cigaretteDao = new CigaretteDAO(em);
@@ -149,10 +152,16 @@ public class CigaretteFacadeREST extends AbstractFacade<Cigarette> {
             boolean validate = userDao.validate(token);
 
             if(validate){
-                JsonParser parser = new JsonParser();
                 
+                CigaretteDAO cigaretteDAO = new CigaretteDAO(em);
                 
-                return Response.ok().build();  
+                User user = userDao.findByToken(token);
+                List<CigarettesAverage> userCigarettes = cigaretteDAO.getOneMonthAgoSmoked(user.getId());
+                List<CigarettesAverage> averageCigarettes = cigaretteDAO.getOneMonthAgoAverageSmoked();
+                
+                Gson gson = new Gson();
+                String json = gson.toJson(new RankingResponse(userCigarettes, averageCigarettes));
+                return Response.ok(json, MediaType.APPLICATION_JSON).build(); 
             
             }else{
                 return Response.status(Response.Status.FORBIDDEN).entity("Ação não permitida para esse usuário.").build();  
